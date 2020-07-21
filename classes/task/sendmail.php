@@ -53,7 +53,7 @@ class sendmail extends \core\task\scheduled_task {
 		
 		$mailsTosend = $DB->get_records_sql("SELECT * from {custonsmtp_email} 
 			where timesend is null
-			order by timecreated"));
+			order by timecreated");
 		foreach($mailsTosend as $mail){
 			if($accountAray[$mail->account]&&$accountAray[$mail->account]->mailsend<$maxmailsend){
 				if($this->process_queue($mail,$accountAray[$mail->account])){
