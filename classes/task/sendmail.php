@@ -24,7 +24,7 @@ class sendmail extends \core\task\scheduled_task {
 			if($accountAray[$priority]){
 				$priorityMailsTosend = $DB->get_records_sql("SELECT * from {custonsmtp_email} 
 				where account={$priority} and timesend is null
-				order by timecreated"));
+				order by timecreated");
 				$localmailsend = 0;
 				$limitebraked = false;
 				foreach($priorityMailsTosend as $mail){
@@ -85,8 +85,8 @@ class sendmail extends \core\task\scheduled_task {
 		$mail->Password = $accountOb->password;
 			
 		$mail->Sender = $mailOb->from;
-		if($mailOb->fromName){
-			$mail->FromName = $mailOb->fromName;
+		if($mailOb->from_name){
+			$mail->FromName = $mailOb->from_name;
 		}
 		if($mailOb->replyto){
 			$mail->addReplyTo($mailOb->replyto);
@@ -96,8 +96,8 @@ class sendmail extends \core\task\scheduled_task {
 		$mail->WordWrap = 79;
 		$mail->isHTML(true);
 		$mail->Encoding = 'quoted-printable';
-		if($mailOb->bodyHTML){
-			$messagehtml = $mailOb->bodyHTML;
+		if($mailOb->body_html){
+			$messagehtml = $mailOb->body_html;
 		}else{
 			$messagehtml = trim(text_to_html($mailOb->body));
 		}
