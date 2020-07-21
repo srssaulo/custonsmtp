@@ -98,11 +98,12 @@ class sendmail extends \core\task\scheduled_task {
 		$mail->Encoding = 'quoted-printable';
 		if($mailOb->bodyHTML){
 			$messagehtml = $mailOb->bodyHTML;
+		}else{
+			$messagehtml = trim(text_to_html($mailOb->body));
 		}
-		$messagehtml = trim(text_to_html($mailOb->body));
-		$mail->Body    =  $mailOb->body;
+		$mail->Body    =  $messagehtml;
 		$mail->AltBody =  "\n$mailOb->body\n";
-		$toArray = explode($mailOb->body,',');
+		$toArray = explode($mailOb->to,',');
 		foreach($toArray as $to){
 			$mail->addAddress($to);
 		}
