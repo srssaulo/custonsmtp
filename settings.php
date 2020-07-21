@@ -16,7 +16,14 @@ if ($hassiteconfig) {
         $accountsArray[$account->id] = 'Enviar primeiro a fila '.$account->name. ' e depois um por fila';
     }
 
-    $page->add(new admin_setting_configselect('local_custonsmtp/priority', 'Prioridade','Como enviar',$idativotemp,$semestreArray));
+    $page->add(new admin_setting_configselect('local_custonsmtp/priority', 'Prioridade','Como enviar',0,$accountsArray));
+    if(function_exists("override_function")){
+        $overWriteArray = array(0=>'Não sobrescrever');
+        foreach($accounts as $account){
+            $overWriteArray[$account->id] = 'Enviar emails do moodle por '.$account->name;
+        }
+        $page->add(new admin_setting_configselect('local_custonsmtp/oberwritesendmail', 'Sobrescrever envio de email:','Todos emails serão controlados pelo plugin',0,$overWriteArray));
+    }
     
 
     $ADMIN->add('localplugins', $page);

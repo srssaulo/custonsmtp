@@ -7,36 +7,44 @@ class formAcount extends moodleform {
         global $CFG, $DB;
         $mform =& $this->_form;
         $id        = $this->_customdata['id'];
-        $account = null;
-        if($id){
-            $account =$DB->get_record('custonsmtp_accounts',array('id'=>$id));
-            $host =$account->host;
-            $name =$account->name;
-            $dialylimit = $account->dialylimit;
-            $password = $account->password;
-        }
+
         $mform->addElement('header', 'dataform','Conta SMTP');
-
-        //Aqui vou fazer a consulta para colocar no SELECT curso
-
-        $mform->addElement('text', 'name', 'Name:',$name,array('maxlength'=>255));
+        
+        $mform->addElement('text', 'name', 'Name:',array('maxlength'=>255));
         $mform->setType('name', PARAM_TEXT);
 
-        $mform->addElement('text', 'host', 'Host:',$host,array('maxlength'=>255));
+        $mform->addElement('text', 'host', 'Host:',array('maxlength'=>255));
         $mform->setType('host', PARAM_TEXT);
 
-        $mform->addElement('text', 'dialylimit', 'Limite Diario:',$dialylimit,array('maxlength'=>4));
+        $mform->addElement('text', 'username', 'Username:',array('maxlength'=>255));
+        $mform->setType('username', PARAM_TEXT);
+
+        $mform->addElement('passwordunmask', 'password', 'Password:',array('maxlength'=>255));
+        $mform->setType('password', PARAM_TEXT);
+
+        $selectSecurity =$mform->addElement('select', 'security', "Segurança:", array(''=>"Nenhuma", 'ssl'=>'SSL', 'tls'=>"TLS"));
+        $mform->setType('security', PARAM_TEXT);
+
+        $mform->addElement('text', 'dialylimit', 'Limite Diario:', array('maxlength'=>4));
         $mform->setType('dialylimit', PARAM_INT);
 
-        $mform->addElement('text', 'priority', 'Prioridade:',$dialylimit,array('maxlength'=>4));
+        $selectPriority = $mform->addElement('select', 'priority', "Prioridade:", array('1', '2', '3','4'));
+        $mform->addHelpButton('priority', 'priority', 'local_custonsmtp');
         $mform->setType('priority', PARAM_INT);
-
+    
         if($id){
-            $mform->setConstants('name', $semestre->ano);
-            $mform->setConstants('host', $semestre->ano);
-            $mform->setConstants('dialylimit', $semestre->idead);
-            $mform->setConstants('priority', $semestre->idead);
+            $account =$DB->get_record('custonsmtp_accounts',array('id'=>$id));
+            $mform->addElement('hidden', 'id', $id);
+            $mform->setType('id', PARAM_INT);
             $mform->hardFreeze('id');
+            $mform->setDefault('name', $account->name);
+            $mform->setDefault('host', $account->host);
+            $mform->setDefault('username', $account->username);
+            $mform->setDefault('password', $account->password);
+            $mform->setDefault('dialylimit', $account->dialylimit);
+            $selectSecurity->setSelected($account->security);
+            $selectPriority->setSelected($account->priority);
+
             $this->add_action_buttons(true, 'Editar', null);
         }
         else{

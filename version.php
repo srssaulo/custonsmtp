@@ -15,3 +15,4 @@
 // Se alterar a versão o Moodle trava
 $plugin->version  = 2020070700;   //The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires = 2013050100;  // Requires this Moodle version - at least 2.0
+$plugin->component = "local_custonsmtp";
