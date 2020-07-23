@@ -13,11 +13,11 @@ class sendmail extends \core\task\scheduled_task {
 		global $DB;
 
 		$accountAray = $DB->get_records('custonsmtp_accounts');
+		$maxmailsend= get_config('local_custonsmtp', 'maxemailsend');
 		foreach($accountAray as $account){
-			$account->maxmailsend = 0;
+			$account->maxmailsend = $account->dialylimit?$account->dialylimit:$maxmailsend;
 			$account->mailsend = 0;
 		}
-		$maxmailsend= get_config('local_custonsmtp', 'maxemailsend');
 		$limitall= get_config('local_custonsmtp', 'limityall');
 		$priority= get_config('local_custonsmtp', 'priority');
 		$totalmailsend = 0;
@@ -98,7 +98,7 @@ class sendmail extends \core\task\scheduled_task {
 		else{
 			$mail->addReplyTo($mailOb->from_mail);
 		}
-		$mail->From =$accountOb->username;
+		$mail->From =$mailOb->from_mail;
 		$mail->Subject = $mailOb->title;
 		$mail->WordWrap = 79;
 		$mail->isHTML(true);
