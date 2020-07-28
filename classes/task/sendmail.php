@@ -13,10 +13,11 @@ class sendmail extends \core\task\scheduled_task {
 		global $DB;
 
 		$accountAray = $DB->get_records('custonsmtp_accounts');
-		foreach($accountAray as $account){
-			$account->maxmailsend = 0;
-		}
 		$maxmailsend= get_config('local_custonsmtp', 'maxemailsend');
+		foreach($accountAray as $account){
+			$account->maxmailsend = $account->dialylimit?$account->dialylimit:$maxmailsend;
+			$account->mailsend = 0;
+		}
 		$limitall= get_config('local_custonsmtp', 'limityall');
 		$priority= get_config('local_custonsmtp', 'priority');
 		$totalmailsend = 0;
@@ -24,17 +25,13 @@ class sendmail extends \core\task\scheduled_task {
 			if($accountAray[$priority]){
 				$priorityMailsTosend = $DB->get_records_sql("SELECT * from {custonsmtp_email} 
 				where account={$priority} and timesend is null
-				order by timecreated"));
+				order by timecreated");
 				$localmailsend = 0;
 				$limitebraked = false;
 				foreach($priorityMailsTosend as $mail){
 					if($this->process_queue($mail,$accountAray)){
 						$localmailsend++;
 						$totalmailsend++;
-						$update = new stdClass();
-						$update->id = $mail->id;
-						$update->timesend = time();
-						$DB->update_record('custonsmtp_email',$mail);
 						if($localmailsend>$maxmailsend){
 							$limitebraked = true;
 							break;
@@ -51,13 +48,18 @@ class sendmail extends \core\task\scheduled_task {
 			}
 		}
 		
-		$mailsTosend = $DB->get_records_sql("SELECT * from {custonsmtp_email} 
+		$mailsTosend = $DB->get_records_sql("SELECT ce.*,ca.priority from {custonsmtp_email} ce
+			INNER JOIN {custonsmtp_accounts} ca
 			where timesend is null
-			order by timecreated");
+			order by ca.priority DESC ,ce.timecreated");
 		foreach($mailsTosend as $mail){
 			if($accountAray[$mail->account]&&$accountAray[$mail->account]->mailsend<$maxmailsend){
 				if($this->process_queue($mail,$accountAray[$mail->account])){
 					$totalmailsend++;
+					if($localmailsend>$maxmailsend){
+						$limitebraked = true;
+						break;
+					}
 					if($limitall&&$totalmailsend>$maxmailsend){//ja enviaram todos
 						return;
 					}
@@ -72,8 +74,9 @@ class sendmail extends \core\task\scheduled_task {
 		global $CFG;
 
 		require_once $CFG->dirroot.'/lib/phpmailer/moodle_phpmailer.php';
-		$mail = new moodle_phpmailer();
+		$mail = new \moodle_phpmailer();
 		$mail->isSMTP();
+		//$mail->SMTPDebug = true;
 		// Specify main and backup servers.
 		$mail->Host          = $accountOb->host;
 		// Specify secure connection protocol.
@@ -84,44 +87,59 @@ class sendmail extends \core\task\scheduled_task {
 		$mail->Username = $accountOb->username;
 		$mail->Password = $accountOb->password;
 			
-		$mail->Sender = $mailOb->from;
-		if($mailOb->fromName){
-			$mail->FromName = $mailOb->fromName;
+		$mail->Sender = $mailOb->from_mail;
+		if($mailOb->from_name){
+			$mail->FromName = $mailOb->from_name;
 		}
 		if($mailOb->replyto){
 			$mail->addReplyTo($mailOb->replyto);
 		}
-		$mail->From = $mailOb->from;
-		$mail->Subject = $mailOb->header;
+		else{
+			$mail->addReplyTo($mailOb->from_mail);
+		}
+		$mail->From =$mailOb->from_mail;
+		$mail->Subject = $mailOb->title;
 		$mail->WordWrap = 79;
 		$mail->isHTML(true);
 		$mail->Encoding = 'quoted-printable';
-		if($mailOb->bodyHTML){
-			$messagehtml = $mailOb->bodyHTML;
+		if($mailOb->body_html){
+			$messagehtml = $mailOb->body_html;
+		}else{
+			$messagehtml = trim(text_to_html($mailOb->body));
 		}
-		$messagehtml = trim(text_to_html($mailOb->body));
-		$mail->Body    =  $mailOb->body;
+		$mail->Body    =  $messagehtml;
 		$mail->AltBody =  "\n$mailOb->body\n";
-		$toArray = explode($mailOb->body,',');
+		$toArray = explode(',',$mailOb->to_adress);
+		
 		foreach($toArray as $to){
-			$mail->addAddress($to);
+			if($to)
+				$mail->addAddress($to);
 		}
 		
 		//adicoina cc
-		$cArray = explode($mailOb->cc,',');
+		$cArray = explode(',',$mailOb->cc);
+		
 		foreach($cArray as $to){
-			$mail->addCC($to);
+			if($to)
+				$mail->addCC($to);
 		}
 		//adociona  bcc
-		$bccArray = explode($mailOb->bcc,',');
-		foreach($bccArray as $to){
-			$mail->addBCC($to);
-		}
+		$bccArray = explode(',',$mailOb->bcc);
 		
+		foreach($bccArray as $to){
+			if($to)
+				$mail->addBCC($to);
+		}
 		
 		if($mail->send() == false) { //erro no envio
 			return false;
 		} else { 
+			global $DB;
+			$update = new stdClass();
+			$update->id = $mailOb->id;
+			$update->timesend = time();
+			
+			$DB->update_record('custonsmtp_email',$update);
 			return true;
 		}
 	}

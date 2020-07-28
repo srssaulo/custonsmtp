@@ -25,10 +25,10 @@
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="title" TYPE="char"  LENGTH="255" NOTNULL="true" SEQUENCE="false" />
                 <FIELD NAME="body" TYPE="text"  NOTNULL="true" SEQUENCE="false"/>
-                <FIELD NAME="bodyHTML" TYPE="text"  NOTNULL="false" SEQUENCE="false"/>
-                <FIELD NAME="from" TYPE="char"  LENGTH="255" NOTNULL="true" SEQUENCE="false" />
-                <FIELD NAME="fromName" TYPE="char"  LENGTH="255" NOTNULL="false" SEQUENCE="false" />
-                <FIELD NAME="to" TYPE="text"  NOTNULL="true" SEQUENCE="false" />
+                <FIELD NAME="body_html" TYPE="text"  NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="from_mail" TYPE="char"  LENGTH="255" NOTNULL="true" SEQUENCE="false" />
+                <FIELD NAME="from_name" TYPE="char"  LENGTH="255" NOTNULL="false" SEQUENCE="false" />
+                <FIELD NAME="to_adress" TYPE="text"  NOTNULL="true" SEQUENCE="false" />
                 <FIELD NAME="cc" TYPE="text"  NOTNULL="false" SEQUENCE="false" />
                 <FIELD NAME="bcc" TYPE="text"  NOTNULL="false" SEQUENCE="false" />
                 <FIELD NAME="replyto" TYPE="char"   NOTNULL="false" SEQUENCE="false" />
