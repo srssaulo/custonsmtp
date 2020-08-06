@@ -49,7 +49,7 @@ class sendmail extends \core\task\scheduled_task {
 		}
 		
 		$mailsTosend = $DB->get_records_sql("SELECT ce.*,ca.priority from {custonsmtp_email} ce
-			INNER JOIN {custonsmtp_accounts} ca
+			INNER JOIN {custonsmtp_accounts} ca on ca.id=ce.account
 			where timesend is null
 			order by ca.priority DESC ,ce.timecreated");
 		foreach($mailsTosend as $mail){

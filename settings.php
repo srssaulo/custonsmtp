@@ -24,7 +24,7 @@ if ($hassiteconfig) {
         $page->add(new admin_setting_configselect('local_custonsmtp/oberwritesendmail', 'Sobrescrever envio de email:','Todos emails serão controlados pelo plugin',0,$overWriteArray));
     }
     
-
-    $ADMIN->add('localplugins', $page);
-	$ADMIN->add('localplugins', new admin_externalpage('accountspage', 'Cadastro de Contas SMTP', "{$CFG->wwwroot}/local/custonsmtp/accounts.php"));
+    $ADMIN->add('localplugins',$page);
+    $ADMIN->add('localplugins',new admin_externalpage('accountspage', 'Cadastro de Contas SMTP', "{$CFG->wwwroot}/local/custonsmtp/accounts.php"));
+    
 }
