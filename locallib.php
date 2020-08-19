@@ -23,7 +23,7 @@ function DeletaAccount($id){
 function SendMailToQueue($emailOb){
     global $DB;
     $emailOb->timecreated = time();
-    $DB->insert_record("custonsmtp_email", $emailOb);
+    return $DB->insert_record("custonsmtp_email", $emailOb);
 }
 
 //TODO
