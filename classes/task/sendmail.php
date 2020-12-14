@@ -15,6 +15,7 @@ class sendmail extends \core\task\scheduled_task {
 		global $DB;
 
 		$accountAray = $DB->get_records('custonsmtp_accounts');
+		$breakedLimits = 0;
 		$maxmailsend= get_config('local_custonsmtp', 'maxemailsend');
 		foreach($accountAray as $account){
 			$account->maxmailsend = $account->dialylimit?$account->dialylimit:$maxmailsend;
@@ -61,10 +62,17 @@ class sendmail extends \core\task\scheduled_task {
 					$accountAray[$mail->account]->mailsend++;
 					if($accountAray[$mail->account]->mailsend>$accountAray[$mail->account]->maxmailsend){
 						$accountAray[$mail->account]->limitebraked = true;
+						$breakedLimits++;
+						if($breakedLimits>=count($accountAray)){
+							break;
+						}
 					}
 					if($limitall&&$totalmailsend>$maxmailsend){//ja enviaram todos
 						return;
 					}
+				}
+				else{
+					break;
 				}
 			}
 
