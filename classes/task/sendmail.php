@@ -57,7 +57,10 @@ class sendmail extends \core\task\scheduled_task {
 			order by ca.priority DESC ,ce.timecreated");
 		foreach($mailsTosend as $mail){
 			if($accountAray[$mail->account]&&!$accountAray[$mail->account]->limitebraked){
-				$this->process_queue($mail,$accountAray[$mail->account]);
+				if(!$this->process_queue($mail,$accountAray[$mail->account])){
+					$accountAray[$mail->account]->limitebraked = true;
+					continue;
+				}
 				$totalmailsend++;
 				$accountAray[$mail->account]->mailsend++;
 				if($accountAray[$mail->account]->mailsend>$accountAray[$mail->account]->maxmailsend){
