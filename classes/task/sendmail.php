@@ -10,6 +10,8 @@ class sendmail extends \core\task\scheduled_task {
 	}
 
 	public function execute() {
+		ini_set("memory_limit", "-1");
+		set_time_limit(-1);
 		global $DB;
 
 		$accountAray = $DB->get_records('custonsmtp_accounts');
