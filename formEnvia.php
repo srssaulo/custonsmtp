@@ -51,12 +51,8 @@ class formEnvia extends moodleform {
         $mform->addElement('text', 'title', 'Titulo:',array('maxlength'=>255));
         $mform->setType('host', PARAM_TEXT);
 
-        $mform->addElement('textarea', 'body', 'Menagem:');
-        $mform->setType('username', PARAM_TEXT);
-
-        $selectPriority = $mform->addElement('select', 'priority', "Prioridade:", array('1', '2', '3','4'));
-        $mform->addHelpButton('priority', 'priority', 'local_custonsmtp');
-        $mform->setType('priority', PARAM_INT);
+        $mform->addElement('editor', 'body', 'Menagem:');
+        $mform->setType('username', PARAM_RAW);
 
         $this->add_action_buttons(true, 'Enviar', null);
 

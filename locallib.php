@@ -389,5 +389,15 @@ function email_to_user_override($user, $from, $subject, $messagetext, $messageht
 }
 
 function EnviaEmails($dadosform){
-    
+    $mailOb = new stdClass();
+    var_dump($dadosform);
+    die("a");
+    $mailOb->to_adress = $user->email;
+    $mailOb->from_mail = $account->username;
+    $mailOb->from_name = 'AVASUS';
+    $mailOb->title = $titulo;
+    $mailOb->body = $alt;
+    $mailOb->bodyHTML = $texto;
+    $mailOb->account = $account->id;
+    SendMailToQueue($mailOb);
 }
