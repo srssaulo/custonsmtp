@@ -403,9 +403,6 @@ function EnviaEmails($dadosform){
         $mailOb->body = $dadosform->title;
         $mailOb->bodyHTML = format_text($dadosform->body['text'], $dadosform->body['format']);
         $mailOb->account = $account->id;
-        var_dump($mailOb);
-        die("a");
     }
-    die("a");
     SendMailToQueue($mailOb);
 }
