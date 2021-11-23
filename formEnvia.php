@@ -25,7 +25,7 @@ class formEnvia extends moodleform {
         $mform->setType('course', PARAM_INT);
 
 
-        $roles = $DB->get_records_sql("SELECT id,name from {roles} where id in (SELECT roleid from {role_assigments})");
+        $roles = $DB->get_records_sql("SELECT id,name from {role} where id in (SELECT roleid from {role_assigments})");
 
         $arrayRole = array();
         foreach($roles as $role){
