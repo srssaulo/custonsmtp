@@ -1,7 +1,7 @@
 <?php
 require_once('../../config.php');
 require_once('locallib.php');
-require_once('formAcount.php');
+require_once('formEnvia.php');
 
 global $DB,$PAGE;
 
@@ -24,7 +24,7 @@ $PAGE->set_heading('Gerenciamento de Contas');
 echo $OUTPUT->header();
 
 $context = context_system::instance();
-$mform = new formEnvio(null,array('id'=>$id));
+$mform = new formEnvia(null,array('id'=>$id));
 
 $mform->display();
 
