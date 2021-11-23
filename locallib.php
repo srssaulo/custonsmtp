@@ -400,7 +400,7 @@ function EnviaEmails($dadosform){
         $mailOb->from_mail = $account->username;
         $mailOb->from_name = 'AVASUS';
         $mailOb->title = $dadosform->title;
-        $mailOb->body = $dadosform;
+        $mailOb->body = $dadosform->title;
         $mailOb->bodyHTML = format_text($dadosform->body['text'], $dadosform->body['format']);
         $mailOb->account = $account->id;
         var_dump($mailOb);
