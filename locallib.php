@@ -388,3 +388,6 @@ function email_to_user_override($user, $from, $subject, $messagetext, $messageht
 
 }
 
+function EnviaEmails($dadosform){
+    
+}
