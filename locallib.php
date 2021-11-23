@@ -389,16 +389,24 @@ function email_to_user_override($user, $from, $subject, $messagetext, $messageht
 }
 
 function EnviaEmails($dadosform){
-    $mailOb = new stdClass();
-    var_dump($dadosform);
-    var_dump(format_text($dadosform->body['text'], $dadosform->body['format']));
-    $mailOb->to_adress = $user->email;
-    $mailOb->from_mail = $account->username;
-    $mailOb->from_name = 'AVASUS';
-    $mailOb->title = $titulo;
-    $mailOb->body = format_text($dadosform->body['text'], $dadosform->body['format']);
-    $mailOb->bodyHTML = $texto;
-    $mailOb->account = $account->id;
+    global $DB;
+    $account = $DB->get_record('custonsmtp_accounts',array('id'=>$dadosform->account));
+
+    $alunos = $DB->get_records("SELECT firstname||' '||lastname as nome, email from {user} where id in
+    (SELECT userid from {role_assignments} where contextid = (SELECT id from {context} contextlevel = 50 and instanceid={$dadosform->course}))");
+    var_dump(count($alunos));
+    foreach($alunos as $aluno){
+        $mailOb = new stdClass();
+        $mailOb->to_adress = $alunos->email;
+        $mailOb->from_mail = $account->username;
+        $mailOb->from_name = 'AVASUS';
+        $mailOb->title = $dadosform->title;
+        $mailOb->body = $dadosform;
+        $mailOb->bodyHTML = format_text($dadosform->body['text'], $dadosform->body['format']);
+        $mailOb->account = $account->id;
+        var_dump($mailOb);
+        die("a");
+    }
     die("a");
     SendMailToQueue($mailOb);
 }
