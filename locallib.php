@@ -394,10 +394,9 @@ function EnviaEmails($dadosform){
 
     $alunos = $DB->get_records_sql("SELECT firstname||' '||lastname as nome, email from {user} where id in
     (SELECT userid from {role_assignments} where contextid = (SELECT id from {context} where contextlevel = 50 and instanceid={$dadosform->course}))");
-    var_dump(count($alunos));
     foreach($alunos as $aluno){
         $mailOb = new stdClass();
-        $mailOb->to_adress = $alunos->email;
+        $mailOb->to_adress = $aluno->email;
         $mailOb->from_mail = $account->username;
         $mailOb->from_name = 'AVASUS';
         $mailOb->title = $dadosform->title;
