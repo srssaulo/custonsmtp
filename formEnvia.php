@@ -25,11 +25,11 @@ class formEnvia extends moodleform {
         $mform->setType('course', PARAM_INT);
 
 
-        $roles = $DB->get_records_sql("SELECT id,name from {role} where id in (SELECT roleid from {role_assignments})");
+        $roles = $DB->get_records_sql("SELECT id,name,shortname from {role} where id in (SELECT roleid from {role_assignments})");
 
         $arrayRole = array();
         foreach($roles as $role){
-            $arrayRole[$role->id] = $role->name;
+            $arrayRole[$role->id] = $role->name."({$role->shortname})";
 
         }
 
